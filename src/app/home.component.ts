@@ -2,60 +2,62 @@ import { Component, inject } from "@angular/core";
 import { HousingLocation } from "./housing-location";
 import { HousingLocationComponent } from "./housing-location.component";
 import { HousingService } from "./housing.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
+import { AsyncPipe } from "@angular/common";
+import { debounceTime, map, startWith, switchMap } from "rxjs";
 
 @Component({
   selector: "app-home",
-  imports: [HousingLocationComponent, ReactiveFormsModule],
+  imports: [HousingLocationComponent, ReactiveFormsModule, AsyncPipe],
   template: `
     <section class="">
-      <form
-        action=""
-        [formGroup]="search"
-        (submit)="searchByFilter()"
-        class=" mb-4"
-      >
+      <form class=" mb-4">
         <input
           type="text"
-          formControlName="city"
+          [formControl]="searchCtrl"
           class=" placeholder-gray-500 bg-gray-50 border-1 rounded-lg border-gray-300 py-1 px-4 mr-2"
           placeholder="Filter by city"
           id=""
         />
-        <button class=" py-1 px-4 bg-purple-400 text-white rounded-lg">
-          Search
-        </button>
       </form>
     </section>
+
     <section class="flex gap-4 flex-wrap">
-      @for(house of housingLocationList; track house.id){
-      <app-housing-location
-        class=" basis-4/4 min-md:basis-1/4"
-        [housingLocation]="house"
-      />
+      @for (house of filteredHousingLocations$ | async; track house.id) {
+        <app-housing-location
+          class=" basis-4/4 min-md:basis-1/4"
+          [housingLocation]="house"
+        />
       }
     </section>
   `,
 })
 export class HomeComponent {
-  housingLocationList: HousingLocation[] = [];
-  // injection of HousingService
-  housingService: HousingService = inject(HousingService);
+  public readonly housingService = inject(HousingService);
+  private readonly housingLocations$ =
+    this.housingService.getHousingLocations();
 
-  search = new FormGroup({
-    city: new FormControl(""),
-  });
+  readonly searchCtrl = new FormControl("");
 
-  async searchByFilter() {
-    const city = this.search.value.city ?? "";
-    this.housingLocationList = await this.housingService.searchByFilter(city);
-  }
-
-  constructor() {
-    this.housingService
-      .getAllHousingLocations()
-      .then((locationList: HousingLocation[]) => {
-        this.housingLocationList = locationList;
-      });
-  }
+  public readonly filteredHousingLocations$ = this.searchCtrl.valueChanges.pipe(
+    startWith(""),
+    debounceTime(300),
+    switchMap((searchValue) => {
+      return this.housingLocations$.pipe(
+        map((locations) => {
+          return locations.filter((location) => {
+            return (
+              location.city
+                .toLocaleLowerCase()
+                .includes(searchValue?.toLocaleLowerCase() ?? "") ||
+              location.state
+                .toLocaleLowerCase()
+                .includes(searchValue?.toLocaleLowerCase() ?? "")
+            );
+          });
+        }),
+      );
+    }),
+  );
 }

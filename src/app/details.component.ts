@@ -84,18 +84,18 @@ export class DetailsComponent {
   constructor() {
     const housingLocationId = Number(this.route.snapshot.params["id"]);
 
-    this.housingService
-      .getHousingLocationById(housingLocationId)
-      .then((location: HousingLocation | undefined) => {
-        this.housingLocation = location;
-      });
+    // this.housingService
+    //   .getHousingLocationById(housingLocationId)
+    //   .then((location: HousingLocation | undefined) => {
+    //     this.housingLocation = location;
+    //   });
   }
 
   submitApplication() {
-    this.housingService.submitApplication(
-      this.applyForm.value.firstName ?? "",
-      this.applyForm.value.lastName ?? "",
-      this.applyForm.value.email ?? ""
-    );
+    // this.housingService.submitApplication(
+    //   this.applyForm.value.firstName ?? "",
+    //   this.applyForm.value.lastName ?? "",
+    //   this.applyForm.value.email ?? ""
+    // );
   }
 }

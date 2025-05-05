@@ -1,36 +1,25 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HousingLocation } from "./housing-location";
+import { HttpClient } from "@angular/common/http";
+import { tap } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class HousingService {
+  private http = inject(HttpClient);
+
   url = "http://localhost:3000/locations";
 
-  constructor() {}
-  async getAllHousingLocations(): Promise<HousingLocation[]> {
-    const data = await fetch(this.url);
-    return (await data.json()) ?? [];
+  getHousingLocations() {
+    return this.http.get<HousingLocation[]>(this.url);
   }
 
-  async getHousingLocationById(
-    id: Number
-  ): Promise<HousingLocation | undefined> {
-    const data = await fetch(`${this.url}/${id}`);
-    return (await data.json()) ?? {};
-  }
-  submitApplication(firstName: string, lastName: string, email: string) {
-    console.log(firstName, lastName, email);
+  getHousingLocationById(id: number) {
+    return this.http.get<HousingLocation>(`${this.url}/${id}`);
   }
 
-  async searchByFilter(city: string): Promise<HousingLocation[]> {
-    console.log(city);
-    if (city) {
-      const locationList = await this.getAllHousingLocations();
-      return locationList.filter((location) => {
-        return location.city.toLowerCase() === city.toLowerCase();
-      });
-    }
-    return await this.getAllHousingLocations();
-  }
+  // submitApplication(firstName: string, lastName: string, email: string) {
+  //   console.log(firstName, lastName, email);
+  // }
 }
