@@ -1,10 +1,10 @@
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { HousingService } from "./housing.service";
-import { HousingLocation } from "./housing-location";
+import { HousingLocation } from "./housing-location.interface";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 @Component({
-  selector: "app-details",
+  selector: "app-location-details",
   imports: [ReactiveFormsModule],
   template: ` <article class="flex flex-col">
     <img
@@ -70,7 +70,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
   </article>`,
   styles: ``,
 })
-export class DetailsComponent {
+export class LocationDetailsComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
   housingService: HousingService = inject(HousingService);
 

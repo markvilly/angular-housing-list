@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { HousingLocation } from "./housing-location";
+import { HousingLocation } from "./housing-location.interface";
 import { RouterModule } from "@angular/router";
 @Component({
-  selector: "app-housing-location",
+  selector: "app-location-card",
   imports: [RouterModule],
   template: ` <section
     class=" bg-white  drop-shadow-md transition duration-300 delay-50 ease-in-out hover:drop-shadow-xl p-4  lg:w-[300px]  rounded-lg h-[350px] mb-4 border-gray-400"
@@ -23,6 +23,6 @@ import { RouterModule } from "@angular/router";
     >
   </section>`,
 })
-export class HousingLocationComponent {
+export class LocationCardComponent {
   @Input({ required: true }) housingLocation!: HousingLocation;
 }

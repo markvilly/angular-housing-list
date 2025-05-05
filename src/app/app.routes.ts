@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
-import { HomeComponent } from "./home.component";
-import { DetailsComponent } from "./details.component";
+import { HomeComponent } from "./home/home.component";
 export const routes: Routes = [
   {
     path: "",
@@ -8,9 +7,11 @@ export const routes: Routes = [
     title: "Home Page",
   },
   {
-    path: "details/:id",
-    loadComponent: () =>
-      import("./details.component").then((c) => c.DetailsComponent),
+    path: ":id",
     title: "Details Page",
+    loadComponent: () =>
+      import("./home/housing/location-details.component").then(
+        (c) => c.LocationDetailsComponent,
+      ),
   },
 ];

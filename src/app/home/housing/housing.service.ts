@@ -1,7 +1,6 @@
 import { inject, Injectable } from "@angular/core";
-import { HousingLocation } from "./housing-location";
+import { HousingLocation } from "./housing-location.interface";
 import { HttpClient } from "@angular/common/http";
-import { tap } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -18,8 +17,4 @@ export class HousingService {
   getHousingLocationById(id: number) {
     return this.http.get<HousingLocation>(`${this.url}/${id}`);
   }
-
-  // submitApplication(firstName: string, lastName: string, email: string) {
-  //   console.log(firstName, lastName, email);
-  // }
 }
