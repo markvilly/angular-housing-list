@@ -7,9 +7,9 @@ import { RouterModule } from "@angular/router";
   selector: "app-root",
   imports: [RouterModule],
   template: `
-    <main class="px-3 py-10  h-[100vh]">
-      <header class="py-4">
-        <a routerLink=""><img src="assets/logo.svg" alt="Logo" /></a>
+    <main class="px-10 py-10 bg-red-100 h-[100vh]">
+      <header>
+        <img src="/assets/logo.svg" alt="Logo" />
       </header>
       <router-outlet></router-outlet>
     </main>

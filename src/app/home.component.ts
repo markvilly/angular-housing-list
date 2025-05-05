@@ -46,8 +46,9 @@ export class HomeComponent {
     city: new FormControl(""),
   });
 
-  searchByFilter() {
-    this.housingService.searchByFilter(this.search.value.city);
+  async searchByFilter() {
+    const city = this.search.value.city ?? "";
+    this.housingLocationList = await this.housingService.searchByFilter(city);
   }
 
   constructor() {

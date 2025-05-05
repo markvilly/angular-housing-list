@@ -22,7 +22,15 @@ export class HousingService {
   submitApplication(firstName: string, lastName: string, email: string) {
     console.log(firstName, lastName, email);
   }
-  searchByFilter(city: string | null | undefined) {
+
+  async searchByFilter(city: string): Promise<HousingLocation[]> {
     console.log(city);
+    if (city) {
+      const locationList = await this.getAllHousingLocations();
+      return locationList.filter((location) => {
+        return location.city.toLowerCase() === city.toLowerCase();
+      });
+    }
+    return await this.getAllHousingLocations();
   }
 }
