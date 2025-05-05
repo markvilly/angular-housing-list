@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { HousingLocation } from "./housing-location";
 import { HousingLocationComponent } from "./housing-location.component";
 import { HousingService } from "./housing.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
 import { AsyncPipe } from "@angular/common";
 import { debounceTime, map, startWith, switchMap } from "rxjs";
@@ -24,7 +24,7 @@ import { debounceTime, map, startWith, switchMap } from "rxjs";
     </section>
 
     <section class="flex gap-4 flex-wrap">
-      @for (house of filteredHousingLocations$ | async; track house.id) {
+      @for (house of filteredHousingLocations(); track house.id) {
         <app-housing-location
           class=" basis-4/4 min-md:basis-1/4"
           [housingLocation]="house"
@@ -40,24 +40,29 @@ export class HomeComponent {
 
   readonly searchCtrl = new FormControl("");
 
-  public readonly filteredHousingLocations$ = this.searchCtrl.valueChanges.pipe(
-    startWith(""),
-    debounceTime(300),
-    switchMap((searchValue) => {
-      return this.housingLocations$.pipe(
-        map((locations) => {
-          return locations.filter((location) => {
-            return (
-              location.city
-                .toLocaleLowerCase()
-                .includes(searchValue?.toLocaleLowerCase() ?? "") ||
-              location.state
-                .toLocaleLowerCase()
-                .includes(searchValue?.toLocaleLowerCase() ?? "")
-            );
-          });
-        }),
-      );
-    }),
-  );
+  private readonly filteredHousingLocations$ =
+    this.searchCtrl.valueChanges.pipe(
+      startWith(""),
+      debounceTime(300),
+      switchMap((searchValue) => {
+        return this.housingLocations$.pipe(
+          map((locations) => {
+            return locations.filter((location) => {
+              return (
+                location.city
+                  .toLocaleLowerCase()
+                  .includes(searchValue?.toLocaleLowerCase() ?? "") ||
+                location.state
+                  .toLocaleLowerCase()
+                  .includes(searchValue?.toLocaleLowerCase() ?? "")
+              );
+            });
+          }),
+        );
+      }),
+    );
+
+  filteredHousingLocations = toSignal(this.filteredHousingLocations$, {
+    initialValue: [],
+  });
 }
